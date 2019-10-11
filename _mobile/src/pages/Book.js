@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { SafeAreaView, Alert, StyleSheet, TextInput, AsyncStorage, Text, TouchableOpacity } from 'react-native';
+import { SafeAreaView, Alert, StyleSheet, TouchableOpacity, AsyncStorage, Text } from 'react-native';
+import DatePicker from 'react-native-datepicker'
 
 import api from '../services/api';
 
@@ -7,7 +8,7 @@ export default function Book({ navigation }) {
     const [date, setDate] = useState('');
     const id = navigation.getParam('id');
 
-    async function handleSubmit(){
+    async function handleSubmit() {
         const user_id = await AsyncStorage.getItem('user');
         await api.post(`/spots/${id}/bookings`, {
             date
@@ -19,22 +20,28 @@ export default function Book({ navigation }) {
         navigation.navigate('List');
     }
 
-    function handleCancel () {
+    function handleCancel() {
         navigation.navigate('List');
     }
 
-    
+
     return (
         <SafeAreaView style={styles.container}>
             <Text style={styles.label}>DATA DE INTERESSE *</Text>
-            <TextInput
-                style={styles.input}
+            
+            <DatePicker
+                style={styles.datePicker}
+                date={date}
+                mode="datetime"
                 placeholder="Qual data você quer reservar?"
-                placeholderTextColor="#999"
-                autoCapitalize="words"
-                autoCorrect={false}
-                value={date}
-                onChangeText={setDate}
+                format={`DD-MM-YYYY (h:mm)`}
+                locale="pt_BR"
+                minDate="2019-09-10"
+                maxDate="2021-01-01"
+                confirmBtnText="Confirmar"
+                cancelBtnText="Cancelar"
+                showIcon={false}
+                onDateChange={setDate}
             />
 
             <TouchableOpacity onPress={handleSubmit} style={styles.button}>
@@ -44,13 +51,13 @@ export default function Book({ navigation }) {
                 <Text style={styles.buttonText}>Cancelar</Text>
             </TouchableOpacity>
 
-            
+
         </SafeAreaView>
     )
 }
 
 const styles = StyleSheet.create({
-    container:{
+    container: {
         margin: 30,
         marginTop: 50,
     },
@@ -62,15 +69,12 @@ const styles = StyleSheet.create({
         marginTop: 30,
     },
 
-    input: {
-        borderWidth: 1,
-        borderColor: '#DDD',
-        paddingHorizontal: 20,
-        fontSize: 16,
-        color: '#444',
-        height: 44,
+    datePicker: {
+        borderColor: '#ddd',
+        width: '100%',
         marginBottom: 20,
-        borderRadius: 2
+        borderRadius: 2,
+        borderWidth: 1
     },
 
     button: {
@@ -92,6 +96,6 @@ const styles = StyleSheet.create({
         fontSize: 16
     },
 
-   
+
 
 })
